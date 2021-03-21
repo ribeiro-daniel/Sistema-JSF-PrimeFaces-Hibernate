@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+	<h:outputStylesheet name="primeicons/primeicons.css" library="primefaces"/>
+	<title>PrimeFaces + JSF</title>
+</h:head>
+<h:body>
+	
+	<h:form>
+		<p:breadCrumb>
+			<p:menuitem />
+			<p:menuitem value="Administração" action="index.jsf" style="text-decoration:none" />
+		</p:breadCrumb>
+	</h:form>
+
+	<h:form id="formularioCadastro">
+		<p:growl showDetail="true" closable="true" id="messages">
+			<p:autoUpdate />
+		</p:growl>
+	
+		<h:panelGrid  id="grid">
+			<p:outputLabel value="Código"/>
+			<p:inputText readonly="true" value="#{userPersonBean.user.id}"/>
+			<p:inputText value="#{userPersonBean.user.login}" required="true" id="login">
+				<p:watermark value="Informe o login" for="login" />
+			</p:inputText>
+			
+
+			<p:password value="#{userPersonBean.user.senha}" required="true" id="senha"/>
+				<p:watermark value="Informe a senha" for="senha"/>
+				
+
+			<p:inputText value="#{userPersonBean.user.nome}" required="true" id="nome"/>
+				<p:watermark value="Informe o nome" for="nome"/>
+				
+
+			<p:inputNumber value="#{userPersonBean.user.salario}" id="salario" required="true" />
+				<p:watermark value="Informe o salário" for="salario"/>
+				
+
+			<p:inputText value="#{userPersonBean.user.sobrenome}" required="true" id="sobrenome"/>
+				<p:watermark value="Informe o sobrenome" for="sobrenome"/>
+
+			<p:inputText value="#{userPersonBean.user.cep}" required="true" id="CEP">
+				<f:ajax execute="@this" event="blur" listener="#{userPersonBean.pesquisaCep}"
+					render="logradouro
+							complemento
+							bairro
+							localidade
+							uf " />
+			</p:inputText>
+			<p:watermark value="Informe o CEP" for="CEP"/>
+			
+			<p:inputText value="#{userPersonBean.user.logradouro}"
+				id="logradouro" readonly="true" />
+			<p:watermark value="Logradouro" for="logradouro"/>
+	
+			<p:inputText value="#{userPersonBean.user.complemento}"
+				id="complemento" readonly="true" />
+			<p:watermark value="Complemento" for="complemento"/>
+			
+			<p:inputText value="#{userPersonBean.user.bairro}" id="bairro"
+				readonly="true" />
+			<p:watermark value="Bairro" for="bairro"/>
+	
+			<p:inputText value="#{userPersonBean.user.localidade}"
+				id="localidade" readonly="true" />
+			<p:watermark value="Localidade" for="localidade"/>
+
+			<p:inputText value="#{userPersonBean.user.uf}" id="uf"
+				readonly="true" />
+			<p:watermark value="UF" for="uf"/>
+
+			<p:selectOneMenu value="#{userPersonBean.user.profissao}">
+				<f:selectItem itemLabel="Nenhum(a)" itemValue="" />
+				<f:selectItem itemLabel="Analista de sistemas"
+					itemValue="Analista de sistemas" />
+				<f:selectItem itemLabel="Desenvolvedor Frontend"
+					itemValue="Desenvolvedor Frontend" />
+				<f:selectItem itemLabel="Engenheiro de Software"
+					itemValue="Engenheiro de Software" />
+				<f:selectItem itemLabel="Analista de testes"
+					itemValue="Analista de testes" />
+				<f:selectItem itemLabel="Gerente de projetos TI"
+					itemValue="Gerente de projetos TI" />
+				<f:selectItem itemLabel="Analista Programador"
+					itemValue="Analista Programador" />
+			</p:selectOneMenu>
+
+			<p:selectOneMenu value="#{userPersonBean.user.sexo}">
+				<f:selectItem itemLabel="MASCULINO" itemValue="MASCULINO" />
+				<f:selectItem itemLabel="FEMININO" itemValue="FEMININO" />
+			</p:selectOneMenu>
+			
+			<p:fileUpload mode="advanced" 
+						multiple="false" 
+						sizeLimit="409600" 
+						invalidSizeMessage="Tamanho máximo permitido: 100KB"
+						invalidFileMessage="Somente formatos .png | .jpg | .jpeg são permitidos."
+						update="loadimg messages"
+						listener="#{userPersonBean.upload}"
+						>
+				
+			</p:fileUpload>
+			
+			<h:graphicImage id="loadimg" value="#{userPersonBean.user.imagem}" width="100" height="100"/>
+		</h:panelGrid>
+
+		<p:commandButton actionListener="#{userPersonBean.salvar}" value="Salvar" update="tabelaUsuarios, formularioCadastro :chart"/>
+		<p:commandButton actionListener="#{userPersonBean.atualizar}" value="Atualizar" update="tabelaUsuarios, formularioCadastro :chart"/>
+		<p:commandButton value="Limpar" immediate="true">
+			<f:ajax execute="@this" render="@form" listener="#{userPersonBean.limpar}" />
+		</p:commandButton>
+		
+	</h:form>
+	
+	<h:form id="buscar">
+		<p:panel columns="4">
+			<p:inputText value="#{userPersonBean.usuarioPesquisado}" id="buscar"/> 
+			<p:watermark value="Buscar por nome" for="buscar"/>
+			<p:commandButton icon="pi pi-search" actionListener="#{userPersonBean.pesquisarUsuario}" update="tabelaUsuarios"/>
+		</p:panel>
+	</h:form>
+	
+	<h:form id="tabelaUsuarios">
+		<p:dataTable value="#{userPersonBean.usuarios}" var="usuario" style="text-align:center"
+		rows="5"
+		paginator="true"
+		>
+		
+			<p:column headerText="ID">
+				#{usuario.id}
+			</p:column>
+				
+			<p:column headerText="Nome">
+				#{usuario.nome}
+			</p:column>
+			
+			<p:column headerText="Cargo">
+				#{usuario.profissao}
+			</p:column>
+
+			<p:column headerText="Deletar">
+				<p:commandLink action="#{userPersonBean.deletar}" immediate="true" ajax="false" >
+					<h:graphicImage url="/resources/img/delete.png" title="Deletar" alt="Deletar" width="25" height="25" />
+					<f:setPropertyActionListener value="#{usuario}" target="#{userPersonBean.user}" />
+				</p:commandLink>
+			</p:column>
+
+			<p:column headerText="Editar">
+				<h:commandLink>
+					<h:graphicImage url="/resources/img/edt.png" title="Editar" alt="Editar" width="25" height="25" />
+					<f:setPropertyActionListener value="#{usuario}" target="#{userPersonBean.user}" />
+				</h:commandLink>
+			</p:column>
+			
+			<p:column headerText="Download">
+				<h:commandLink actionListener="#{userPersonBean.download}" immediate="true">
+					<h:graphicImage url="/resources/img/download.png"/>
+					<f:param name="downloadid" value="#{usuario.id}"/>
+				</h:commandLink>
+				
+			</p:column>
+			
+			
+			<p:column headerText="E-mails">
+				<p:commandLink update=":tabelaUsuarios:dialogemail" oncomplete="PF('dialogemail').show()">
+					<h:graphicImage url="/resources/img/mail.png" title="E-mails" alt="E-mails" width="25" height="25" />
+					<f:setPropertyActionListener value="#{usuario}" target="#{userPersonBean.user}" />
+				</p:commandLink>
+			</p:column>
+
+			<p:column headerText="Telefones">
+				<p:commandLink action="telefone">
+					<h:graphicImage url="/resources/img/fone.png" title="Ver Telefones" alt="Ver telefones" width="25" height="25" />
+					<f:param name="codigouser" value="#{usuario.id}" />
+				</p:commandLink>
+			</p:column>
+		</p:dataTable>
+
+		<p:dialog header="E-mails" id="dialogemail" widgetVar="dialogemail"
+			position="center" modal="true" width="500px" resizable="false" draggable="false" responsive="true">
+
+			<p:panelGrid columns="3">
+				<p:outputLabel value="E-mail" />
+				<p:inputText value="#{userPersonBean.emailUser.email}" id="emailInput" />
+
+				<p:commandButton value="Adicionar" actionListener="#{userPersonBean.addEmail}" update="emailInput, tabelaEmails"/>
+			</p:panelGrid>
+
+			<p:dataTable value="#{userPersonBean.user.emails}" var="email" id="tabelaEmails" style="text-align:center;">
+				<p:column headerText="ID">
+					<p:outputLabel value="#{email.id}"/>
+				</p:column>
+
+				<p:column headerText="E-mail">
+					<p:outputLabel value="#{email.email}"/>
+				</p:column>
+
+				<p:column headerText="Remover">
+					<p:commandLink id="removerEmail" actionListener="#{userPersonBean.removerEmail}" update="tabelaEmails">
+						<h:graphicImage url="/resources/img/delete.png" width="25" height="25" />
+						<f:param name="codigoEmail" value="#{email.id}" />
+					</p:commandLink>
+				</p:column>
+			</p:dataTable>
+		</p:dialog>
+	</h:form>
+
+	<p:chart model="#{userPersonBean.model}" type="pie" id="chart"/>
+
+</h:body>
+</html>

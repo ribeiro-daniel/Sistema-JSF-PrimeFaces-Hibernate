@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+	<title>Telefones</title>
+</h:head>
+<h:body>
+
+	<h:form>
+		<p:breadCrumb>
+			<p:menuitem />
+			<p:menuitem value="Administração" action="index.jsf" />
+		</p:breadCrumb>
+	</h:form>
+
+	<h:form>
+		<p:growl showDetail="true" showSummary="true" closable="true"/>
+		<p:panelGrid columns="2">
+			<p:outputLabel value="Usuário: " />
+			<p:inputText value="#{telephoneBean.userPerson.login}" readonly="true" />
+			
+			<p:outputLabel value="Número" />
+			<p:inputMask value="#{telephoneBean.telefone.numero}" mask="(99) 9 9999-9999" />
+
+			<p:outputLabel value="Tipo" />
+			<p:selectOneMenu value="#{telephoneBean.telefone.tipo}">
+				<f:selectItem itemLabel="Pessoal" itemValue="PESSOAL"/>
+				<f:selectItem itemLabel="Trabalho" itemValue="TRABALHO"/>
+				<f:selectItem itemLabel="Casa" itemValue="CASA"/>
+			</p:selectOneMenu>
+		</p:panelGrid>
+		
+		
+		<p:commandButton value="Salvar" action="#{telephoneBean.salvar}" ajax="false"/>
+	</h:form>
+
+	<h:form>
+
+		<p:dataTable value="#{telephoneBean.userPerson.telefones}"
+			var="telefone" style="text-align:center" >
+			<f:facet name="header">Lista de Telefones</f:facet>
+			<p:column headerText="ID">
+				#{telefone.id}
+			</p:column>
+
+			<p:column headerClass="Número">
+				#{telefone.numero}
+			</p:column>
+
+			<p:column headerText="Tipo">
+				#{telefone.tipo}
+			</p:column>
+
+			<p:column headerText="Remover" >
+				<p:commandLink action="#{telephoneBean.remover}" immediate="true" ajax="false">
+					<h:graphicImage url="/resources/img/delete.png" title="Apagar"
+						alt="Apagar" width="40" height="40" />
+					<f:setPropertyActionListener value="#{telefone}"
+						target="#{telephoneBean.telefone}" />
+				</p:commandLink>
+			</p:column>
+		</p:dataTable>
+
+	</h:form>
+
+</h:body>
+</html>
